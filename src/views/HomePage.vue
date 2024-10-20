@@ -4,7 +4,7 @@
     <button class="button"
             @click="startStandardTest">Стандартный тест</button>
     <button class="button"
-            @click="startRandomTest">30 случайных вопросов</button>
+            @click="startRandomTest">10 случайных вопросов</button>
     <button class="button"
             @click="viewStatistics">Статистика</button>
   </div>

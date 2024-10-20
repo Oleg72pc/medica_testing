@@ -3,35 +3,45 @@
     <h2>Статистика</h2>
     <p>Список вопросов, на которые чаще всего давали неправильные ответы:</p>
     <ul>
-      <li v-for="(count, question) in incorrectAnswers" :key="question">
+      <li v-for="(count, question) in incorrectAnswers"
+          :key="question">
         {{ question }} — {{ count }} раз(а) неправильно
       </li>
     </ul>
     <button @click="clearStatistics">Сбросить статистику</button>
+    <button @click="goHome">На главную</button>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
+<script setup
+        lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-const incorrectAnswers = ref<Record<string, number>>({});
+const incorrectAnswers = ref<Record<string, number>>( {} )
+const router = useRouter()
 
-onMounted(() => {
-  loadStatistics();
-});
+onMounted( () => {
+  loadStatistics()
+} )
 
 const loadStatistics = () => {
-  const savedIncorrectAnswers = JSON.parse(localStorage.getItem('incorrectAnswers') || '{}');
-  incorrectAnswers.value = savedIncorrectAnswers;
-};
+  const savedIncorrectAnswers = JSON.parse( localStorage.getItem( 'incorrectAnswers' ) || '{}' )
+  incorrectAnswers.value = savedIncorrectAnswers
+}
 
 const clearStatistics = () => {
-  localStorage.removeItem('incorrectAnswers');
-  incorrectAnswers.value = {};
-};
+  localStorage.removeItem( 'incorrectAnswers' )
+  incorrectAnswers.value = {}
+}
+
+const goHome = () => {
+  router.push( '/' )
+}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss"
+       scoped>
 ul {
   list-style-type: none;
   padding: 0;
@@ -44,7 +54,7 @@ li {
 button {
   margin-top: 20px;
   padding: 10px;
-  background-color: #f00;
+  background-color: #007bff;
   color: #fff;
   border: none;
   cursor: pointer;
