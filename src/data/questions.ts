@@ -1,4 +1,6 @@
-export const questions = [
+import { Question } from "../interfaces/question.interface.ts"
+
+export const questions:  Question[] = [
     {
         question: "Право граждан РФ на охрану здоровья гарантируется",
         answers: [

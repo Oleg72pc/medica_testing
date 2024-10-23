@@ -4,6 +4,7 @@
     <p>Список вопросов, на которые чаще всего давали неправильные ответы:</p>
     <ul>
       <li v-for="(count, question) in incorrectAnswers"
+          class="stat-item"
           :key="question">
         {{ question }} — {{ count }} раз(а) неправильно
       </li>
@@ -46,17 +47,17 @@ ul {
   list-style-type: none;
   padding: 0;
 }
-
-li {
-  margin-bottom: 10px;
-}
-
-button {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
+//
+//li {
+//  margin-bottom: 10px;
+//}
+//
+//button {
+//  margin-top: 20px;
+//  padding: 10px;
+//  background-color: #007bff;
+//  color: #fff;
+//  border: none;
+//  cursor: pointer;
+//}
 </style>
