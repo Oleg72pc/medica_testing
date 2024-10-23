@@ -8,9 +8,9 @@
           :key="index">
         <p>{{ question.question }}</p>
         <p>
-          <span v-if="userAnswers[index].length === 0">Пропущено</span>
-          <span v-else-if="isCorrectAnswer(index)">Правильно</span>
-          <span v-else>Неправильно</span>
+          <span class="skip-res" v-if="userAnswers[index].length === 0">Пропущено</span>
+          <span class="correct-res" v-else-if="isCorrectAnswer(index)">Правильно</span>
+          <span class="incorrect-res" v-else>Неправильно</span>
         </p>
         <ul>
           <li v-for="(answer, answerIndex) in question.answers"
@@ -30,9 +30,10 @@
             @click="goHome">На главную</button>
   </div>
 
-  <div v-else-if="currentQuestion">
+  <div class="questions-container" v-else-if="currentQuestion">
     <h2>Вопрос {{ currentIndex + 1 }} из {{ questions.length }}</h2>
-    <h3>{{ currentQuestion.question }}</h3>
+    <h3 class="question">{{ currentQuestion.question }}</h3>
+    <h4>Категория вопроса: {{ currentQuestion.category }}</h4>
     <ul>
       <li v-for="(answer, index) in currentQuestion.answers"
           :key="index"

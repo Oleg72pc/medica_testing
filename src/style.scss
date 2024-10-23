@@ -1,4 +1,4 @@
-// Базовые стили
+/* Global Styles */
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f4f7fc;
@@ -7,33 +7,50 @@ body {
   padding: 0;
 }
 
-#app {
-  height: 100vh;
-}
-
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-// Стили для заголовков
 h1, h2, h3 {
-  font-weight: 700;
   color: #1a73e8;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-// Стили для кнопок
+p {
+  line-height: 1.6;
+  color: #555;
+}
+
+a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Button Styles */
 button {
+  display: inline-block;
   background-color: #1a73e8;
   color: #fff;
+  padding: 12px 20px;
   border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 16px;
+  margin: 10px 0;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+  background-color: #155bb5;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 button:disabled {
@@ -41,42 +58,49 @@ button:disabled {
   cursor: not-allowed;
 }
 
-// Стили для вариантов ответов
+.button-large {
+  padding: 14px 30px;
+  font-size: 18px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Answer Option Styles */
 .answer-option {
   background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
   margin-bottom: 10px;
-  transition: background-color 0.3s ease;
   cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .answer-option:hover {
-  background-color: #e0e7ff;
+  background-color: #f0f4ff;
 }
 
 .selected {
-  background-color: #e0e7ff; /* Подсвечивает выбранные ответы */
+  background-color: #d3eafd;
 }
 
 .correct {
-  background-color: #c8e6c9; /* Зелёная подсветка для правильных */
+  background-color: #c8e6c9;
   border-color: #4caf50;
 }
 
 .incorrect {
-  background-color: #ffcdd2; /* Красная подсветка для неправильных */
+  background-color: #ffcdd2;
   border-color: #f44336;
 }
 
-// Прогресс
+/* Progress Bar Styles */
 .progress-bar {
   height: 8px;
   background-color: #e0e0e0;
   border-radius: 4px;
+  margin: 20px 0;
   overflow: hidden;
-  margin: 10px 0;
 }
 
 .progress {
@@ -86,14 +110,14 @@ button:disabled {
   transition: width 0.5s ease;
 }
 
-// Статистика
+/* Statistics Styles */
 .stat-item {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+  padding: 15px;
   background-color: #fff;
   margin-bottom: 10px;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 1px solid #ddd;
 }
 
@@ -105,19 +129,47 @@ button:disabled {
   background-color: #ffcdd2;
 }
 
-// На главную
+.stat-item .question-text {
+  flex: 1;
+  padding-right: 10px;
+}
+
+.stat-item .answer-text {
+  font-weight: 700;
+  color: #555;
+}
+
+/* Back to Home Button */
 .back-home {
   display: inline-block;
-  margin-top: 20px;
   background-color: #1a73e8;
   color: #fff;
-  padding: 10px 20px;
+  padding: 15px 30px;
   text-align: center;
-  border-radius: 5px;
+  border-radius: 8px;
   text-decoration: none;
-  transition: background-color 0.3s ease;
+  font-size: 18px;
+  margin-top: 30px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .back-home:hover {
   background-color: #155bb5;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  button, .back-home {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .answer-option {
+    padding: 12px;
+  }
 }
