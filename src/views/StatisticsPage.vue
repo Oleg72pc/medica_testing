@@ -56,7 +56,7 @@ const goHome = () => {
 $background-color: #121212;
 $text-color: #e0e0e0;
 $primary-color: #48a2ec;
-$button-hover-color: #3a8ecf; // Пример более темного цвета
+$button-hover-color: #3a8ecf;
 $secondary-color: #03badade;
 
 .statistics-container {

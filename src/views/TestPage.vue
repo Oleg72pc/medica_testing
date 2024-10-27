@@ -40,6 +40,7 @@
         {{ answer }}
       </li>
     </ul>
+    <img v-if="isAnswered" :src="resultImage" alt="Result Image" class="result-image" />
     <div class="buttons-container">
       <button v-if="!isAnswered && hasSelectedAnswer" class="submit-button" @click="submitAnswer">Ответить</button>
       <button v-if="isAnswered" class="next-button" @click="nextQuestion">Следующий вопрос</button>
@@ -59,13 +60,16 @@ import { useRoute, useRouter } from 'vue-router'
 import { questions as allQuestions } from '../data/questions'
 import { Question } from "../interfaces/question.interface.ts"
 
+import funnyImage from '../assets/answers/funny.svg'
+import sadImage from '../assets/answers/sad.svg'
+
 const route = useRoute()
 const router = useRouter()
 const currentIndex = ref(0)
 const correctAnswers = ref(0)
 const questions = ref<Question[]>([])
 const userAnswers = ref<(number[])[]>([])
-const elapsedTime = ref(0) // Время в секундах
+const elapsedTime = ref(0)
 let timer: number | undefined
 
 const isRandomTest = computed(() => route.query.random === 'true')
@@ -77,6 +81,11 @@ const progressPercentage = computed(() => ((currentIndex.value + 1) / questions.
 
 const hasSelectedAnswer = computed(() => {
   return userAnswers.value[currentIndex.value]?.length > 0
+})
+
+const resultImage = computed(() => {
+  if (!isAnswered.value) return ''
+  return isCorrectAnswer(currentIndex.value) ? funnyImage : sadImage
 })
 
 const toggleAnswer = (index: number) => {
@@ -190,7 +199,6 @@ onUnmounted(() => {
   stopTimer()
 })
 
-// Watcher to stop the timer when the test is finished
 watch(isTestFinished, (newValue) => {
   if (newValue) {
     stopTimer()
@@ -213,7 +221,7 @@ $skip-color: #ff9800;
   background-color: $background-color;
   color: $text-color;
   padding: 20px;
-  height: calc(100vh - 60px); // Учитываем высоту фиксированной кнопки
+  height: calc(100vh - 60px);
   overflow-y: auto;
 }
 
@@ -329,7 +337,7 @@ button {
   background-color: $background-color;
   color: $text-color;
   padding: 20px;
-  height: calc(100vh - 60px); // Учитываем высоту фиксированной кнопки
+  height: calc(100vh - 60px);
   overflow-y: auto;
 }
 
@@ -372,4 +380,14 @@ button {
     background-color: darken($incorrect-color, 20%);
   }
 }
+
+.result-image {
+  display: block;
+  margin: 20px auto;
+  max-width: 100px;
+  height: auto;
+  background-color: $text-color;
+  border-radius: 50%;
+}
 </style>
+
