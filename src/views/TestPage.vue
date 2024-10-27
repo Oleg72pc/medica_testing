@@ -1,216 +1,375 @@
 <template>
-  <div v-if="isTestFinished">
-    <h2>Тест завершен!</h2>
-    <p>Вы ответили на {{ correctAnswers }} из {{ questions.length }} вопросов.</p>
-    <h3>Результаты:</h3>
-      <ul>
-      <li v-for="(question, index) in questions"
-          :key="index">
-        <p>{{ question.question }}</p>
-        <p>
+  <div v-if="isTestFinished" class="test-finished-container">
+    <h2 class="test-finished-title">Тест завершен!</h2>
+    <p class="test-summary">Вы ответили на {{ correctAnswers }} из {{ questions.length }} вопросов.</p>
+    <p class="test-time">Время выполнения: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
+    <h3 class="results-title">Результаты:</h3>
+    <ul class="results-list">
+      <li v-for="(question, index) in questions" :key="index" class="result-item">
+        <p class="question-text">{{ question.question }}</p>
+        <p class="answer-status">
           <span class="skip-res" v-if="userAnswers[index].length === 0">Пропущено</span>
           <span class="correct-res" v-else-if="isCorrectAnswer(index)">Правильно</span>
           <span class="incorrect-res" v-else>Неправильно</span>
         </p>
-        <ul>
-          <li v-for="(answer, answerIndex) in question.answers"
-              :key="answerIndex"
-              class="answer-option"
-              :class="{
-              correct: question.correctIndexes?.includes(answerIndex),
-              selected: userAnswers[index]?.includes(answerIndex)
-            }">
+        <ul class="answers-list">
+          <li v-for="(answer, answerIndex) in question.answers" :key="answerIndex" class="answer-option" :class="{ correct: question.correctIndexes?.includes(answerIndex), selected: userAnswers[index]?.includes(answerIndex) }">
             {{ answer }}
           </li>
         </ul>
       </li>
     </ul>
-    <button @click="restartTest">Начать заново</button>
-    <button class="back-home"
-            @click="goHome">На главную</button>
-  </div>
-
-  <div class="questions-container" v-else-if="currentQuestion">
-    <h2>Вопрос {{ currentIndex + 1 }} из {{ questions.length }}</h2>
-    <h3 class="question">{{ currentQuestion.question }}</h3>
-    <h4>Категория вопроса: {{ currentQuestion.category }}</h4>
-    <ul>
-      <li v-for="(answer, index) in currentQuestion.answers"
-          :key="index"
-          @click="toggleAnswer(index)"
-          class="answer-option"
-          :class="getAnswerClass(index)">
-        {{ answer }}
-      </li>
-    </ul>
-    <div>
-      <button v-if="!isAnswered"
-              @click="submitAnswer">Ответить</button>
-      <button v-else
-              @click="nextQuestion">Следующий вопрос</button>
-      <button @click="skipQuestion">Пропустить</button>
-      <button @click="goHome">На главную</button>
+    <div class="buttons-container">
+      <button class="restart-button" @click="restartTest">Начать заново</button>
+      <button class="back-home-button" @click="goHome">На главную</button>
     </div>
   </div>
 
-  <div v-else>
-    <p>Идет загрузка вопросов...</p>
+  <div class="questions-container" v-else-if="currentQuestion">
+    <h2 class="question-title">Вопрос {{ currentIndex + 1 }} из {{ questions.length }}</h2>
+    <div class="progress-bar">
+      <div class="progress" :style="{ width: progressPercentage + '%' }"></div>
+    </div>
+    <h3 class="question-text">{{ currentQuestion.question }}</h3>
+    <h4 class="question-category">Категория вопроса: {{ currentQuestion.category }}</h4>
+    <p class="test-time">Время: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
+    <ul class="answers-list">
+      <li v-for="(answer, index) in currentQuestion.answers" :key="index" @click="toggleAnswer(index)" 
+      class="answer-option" 
+      :class="getAnswerClass(index)">
+        {{ answer }}
+      </li>
+    </ul>
+    <div class="buttons-container">
+      <button v-if="!isAnswered && hasSelectedAnswer" class="submit-button" @click="submitAnswer">Ответить</button>
+      <button v-if="isAnswered" class="next-button" @click="nextQuestion">Следующий вопрос</button>
+      <button v-if="!isAnswered" class="skip-button" @click="skipQuestion">Пропустить</button>
+      <button class="back-home-button" @click="goHome">На главную</button>
+    </div>
+  </div>
+
+  <div v-else class="loading-container">
+    <p class="loading-text">Идет загрузка вопросов...</p>
   </div>
 </template>
 
-
-<script setup
-        lang="ts">
-import { ref, computed, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { questions as allQuestions } from '../data/questions'
 import { Question } from "../interfaces/question.interface.ts"
 
 const route = useRoute()
 const router = useRouter()
-const currentIndex = ref( 0 )
-const correctAnswers = ref( 0 )
-const questions = ref<Question[]>( [] )
-const userAnswers = ref<( number[] )[]>( [] )
+const currentIndex = ref(0)
+const correctAnswers = ref(0)
+const questions = ref<Question[]>([])
+const userAnswers = ref<(number[])[]>([])
+const elapsedTime = ref(0) // Время в секундах
+let timer: number | undefined
 
-const isRandomTest = computed( () => route.query.random === 'true' )
-const currentQuestion = computed( () => questions.value[ currentIndex.value ] )
-const isAnswered = ref( false )
-const isTestFinished = computed( () => currentIndex.value >= questions.value.length )
+const isRandomTest = computed(() => route.query.random === 'true')
+const currentQuestion = computed(() => questions.value[currentIndex.value])
+const isAnswered = ref(false)
+const isTestFinished = computed(() => currentIndex.value >= questions.value.length)
 
-// Логика выбора ответа остаётся той же
-const toggleAnswer = ( index: number ) => {
-  if ( isAnswered.value ) {
-    return // Блокируем выбор, если вопрос уже отвечен
+const progressPercentage = computed(() => ((currentIndex.value + 1) / questions.value.length) * 100)
+
+const hasSelectedAnswer = computed(() => {
+  return userAnswers.value[currentIndex.value]?.length > 0
+})
+
+const toggleAnswer = (index: number) => {
+  if (isAnswered.value) {
+    return
   }
 
-  const selectedAnswers = userAnswers.value[ currentIndex.value ]
-  const answerIndex = selectedAnswers.indexOf( index )
-  if ( answerIndex > -1 ) {
-    selectedAnswers.splice( answerIndex, 1 ) // Удалить ответ, если уже выбран
+  const selectedAnswers = userAnswers.value[currentIndex.value]
+  const answerIndex = selectedAnswers.indexOf(index)
+  if (answerIndex > -1) {
+    selectedAnswers.splice(answerIndex, 1)
   } else {
-    selectedAnswers.push( index ) // Добавить ответ в выбранные
+    selectedAnswers.push(index)
   }
 }
 
-// Логика проверки ответа
 const submitAnswer = () => {
-  // Проверяем правильность ответа
-  if ( isCorrectAnswer( currentIndex.value ) ) {
+  if (isCorrectAnswer(currentIndex.value)) {
     correctAnswers.value++
   } else {
-    saveIncorrectAnswer( currentQuestion.value.question )
+    saveIncorrectAnswer(currentQuestion.value.question)
   }
-  isAnswered.value = true // Пользователь ответил на вопрос
+  isAnswered.value = true
 }
 
-// Переход к следующему вопросу
 const nextQuestion = () => {
   currentIndex.value++
-  isAnswered.value = false // Сбрасываем состояние ответа для следующего вопроса
+  isAnswered.value = false
 }
 
-const getAnswerClass = ( index: number ) => {
-  // Проверяем, существует ли текущий вопрос и его правильные ответы
-  if ( !currentQuestion.value || !currentQuestion.value.correctIndexes ) {
-    return {} // Возвращаем пустой объект, если данных нет
+const getAnswerClass = (index: number) => {
+  if (!currentQuestion.value || !currentQuestion.value.correctIndexes) {
+    return {}
   }
 
-  if ( !isAnswered.value ) {
+  if (!isAnswered.value) {
     return {
-      selected: isSelected( index ),
+      selected: isSelected(index),
     }
   } else {
     return {
-      selected: isSelected( index ),
-      correct: currentQuestion.value.correctIndexes.includes( index ), // Подсвечиваем правильный ответ
-      incorrect: isSelected( index ) && !currentQuestion.value.correctIndexes.includes( index ), // Подсвечиваем неправильный ответ
+      selected: isSelected(index),
+      correct: currentQuestion.value.correctIndexes.includes(index),
+      incorrect: isSelected(index) && !currentQuestion.value.correctIndexes.includes(index),
     }
   }
 }
 
 const skipQuestion = () => {
-  userAnswers.value[ currentIndex.value ] = []
+  userAnswers.value[currentIndex.value] = []
   nextQuestion()
 }
 
 const restartTest = () => {
   currentIndex.value = 0
   correctAnswers.value = 0
-  userAnswers.value = Array( questions.value.length ).fill( [] ).map( () => [] )
+  userAnswers.value = Array(questions.value.length).fill([]).map(() => [])
+  elapsedTime.value = 0
+  startTimer()
 }
 
 const goHome = () => {
-  router.push( '/' )
+  router.push('/')
 }
 
-const isCorrectAnswer = ( index: number ) => {
-  const selectedAnswers = userAnswers.value[ index ]
-  const correctIndexes = questions.value[ index ].correctIndexes
+const isCorrectAnswer = (index: number) => {
+  const selectedAnswers = userAnswers.value[index]
+  const correctIndexes = questions.value[index].correctIndexes
   return (
-      correctIndexes &&
-      selectedAnswers.length === correctIndexes.length &&
-      selectedAnswers.every( ( answer ) => correctIndexes.includes( answer ) )
+    correctIndexes &&
+    selectedAnswers.length === correctIndexes.length &&
+    selectedAnswers.every((answer) => correctIndexes.includes(answer))
   )
 }
 
-const isSelected = ( index: number ) => {
-  return userAnswers.value[ currentIndex.value ]?.includes( index )
+const isSelected = (index: number) => {
+  return userAnswers.value[currentIndex.value]?.includes(index)
 }
 
-const saveIncorrectAnswer = ( questionText: string ) => {
-  const incorrectAnswers = JSON.parse( localStorage.getItem( 'incorrectAnswers' ) || '{}' )
-  incorrectAnswers[ questionText ] = ( incorrectAnswers[ questionText ] || 0 ) + 1
-  localStorage.setItem( 'incorrectAnswers', JSON.stringify( incorrectAnswers ) )
+const saveIncorrectAnswer = (questionText: string) => {
+  const incorrectAnswers = JSON.parse(localStorage.getItem('incorrectAnswers') || '{}')
+  incorrectAnswers[questionText] = (incorrectAnswers[questionText] || 0) + 1
+  localStorage.setItem('incorrectAnswers', JSON.stringify(incorrectAnswers))
 }
 
-onMounted( () => {
-  if ( isRandomTest.value ) {
+const startTimer = () => {
+  timer = setInterval(() => {
+    elapsedTime.value++
+  }, 1000)
+}
+
+const stopTimer = () => {
+  if (timer) {
+    clearInterval(timer)
+  }
+}
+
+onMounted(() => {
+  if (isRandomTest.value) {
     questions.value = allQuestions
-        .sort( () => Math.random() - 0.5 )
-        .slice( 0, 10 )
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 50)
   } else {
     questions.value = allQuestions
   }
-  userAnswers.value = Array( questions.value.length ).fill( [] ).map( () => [] )
-} )
+  userAnswers.value = Array(questions.value.length).fill([]).map(() => [])
+  startTimer()
+})
 
+onUnmounted(() => {
+  stopTimer()
+})
+
+// Watcher to stop the timer when the test is finished
+watch(isTestFinished, (newValue) => {
+  if (newValue) {
+    stopTimer()
+  }
+})
 </script>
 
-<style lang="scss"
-       scoped>
+<style lang="scss" scoped>
+$background-color: #121212;
+$text-color: #e0e0e0;
+$primary-color: #48a2ec;
+$secondary-color: #03badade;
+$progress-color: #4caf50;
+$button-hover-color: darken($primary-color, 10%);
+$correct-color: #4caf50;
+$incorrect-color: #f44336;
+$skip-color: #ff9800;
 
-//.selected {
-//  background-color: #d3eafd; /* Голубая подсветка для выбранных */
-//  color: #1a1a1a;
-//}
-//
-//.correct {
-//  background-color: #c8e6c9; /* Зелёная подсветка для правильных ответов */
-//  color: #1a1a1a;
-//}
-//
-//.incorrect {
-//  background-color: #ffcdd2; /* Красная подсветка для неправильных ответов */
-//  color: #1a1a1a;
-//}
-//
-ul {
+.test-finished-container {
+  background-color: $background-color;
+  color: $text-color;
+  padding: 20px;
+  height: calc(100vh - 60px); // Учитываем высоту фиксированной кнопки
+  overflow-y: auto;
+}
+
+.test-finished-title, .results-title, .question-title, .question-category {
+  color: $text-color;
+}
+
+.test-summary, .answer-status, .loading-text {
+  color: $text-color;
+
+  .skip-res {
+    color: $skip-color;
+  }
+
+  .correct-res {
+    color: $correct-color;
+  }
+
+  .incorrect-res {
+    color: $incorrect-color;
+  }
+}
+
+.test-time {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.results-list, .answers-list {
   list-style-type: none;
   padding: 0;
 }
 
-//
-//li {
-//  margin-bottom: 10px;
-//}
-//
-//button {
-//  margin-top: 20px;
-//  padding: 10px;
-//  background-color: #007bff;
-//  color: #fff;
-//  border: none;
-//  cursor: pointer;
-//}
+.result-item, .answer-option {
+  margin-bottom: 10px;
+  color: $text-color;
+  border: 1px solid $text-color;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.answer-option {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &.selected {
+    background-color: $secondary-color;
+  }
+
+  &.correct {
+    background-color: lighten($correct-color, 20%);
+  }
+
+  &.incorrect {
+    background-color: darken($incorrect-color, 20%);
+  }
+}
+
+.progress-bar {
+  width: 100%;
+  background-color: lighten($background-color, 10%);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress {
+  height: 10px;
+  background-color: $progress-color;
+  transition: width 0.3s ease;
+}
+
+button {
+  padding: 5px 10px;
+  margin: 10px;
+  font-size: 1rem;
+  color: $text-color;
+  background-color: $primary-color;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $button-hover-color;
+  }
+}
+
+.buttons-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: $background-color;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.questions-container {
+  background-color: $background-color;
+  color: $text-color;
+  padding: 20px;
+  height: calc(100vh - 60px); // Учитываем высоту фиксированной кнопки
+  overflow-y: auto;
+}
+
+.question-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.question-category {
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.answers-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.answer-option {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &.selected {
+    background-color: $secondary-color;
+  }
+
+  &.correct {
+    background-color: lighten($correct-color, 20%);
+  }
+
+  &.incorrect {
+    background-color: darken($incorrect-color, 20%);
+  }
+}
 </style>
