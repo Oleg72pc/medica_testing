@@ -107,8 +107,10 @@ const goHome = () => {
   list-style-type: none;
   padding: 0;
   flex-grow: 1;
-  padding-right: 20px;
+  padding: 10px;
   overflow-y: auto;
+  box-shadow: inset 0 0 8px 0 $primary-half-transparent-color;
+  border-radius: 10px;
 }
 
 .stat-item {

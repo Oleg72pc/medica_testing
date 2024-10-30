@@ -11,6 +11,7 @@
       <h3 class="results-title">Результаты:</h3>
       <ul class="results-list">
         <li v-for="(question, index) in questions" :key="index" class="result-item">
+          <h4 class="question-category">Категория вопроса: {{ question.category }}</h4>
           <p class="question-text">{{ question.question }}</p>
           <p class="answer-status">
             <span class="skip-res" v-if="userAnswers[index].length === 0">Пропущено</span>
@@ -37,12 +38,12 @@
           <img class="home-img" src="../assets/home-white.svg" alt="home" />
         </div>
       </div>
+      <h4 class="question-category">Категория вопроса: {{ currentQuestion.category }}</h4>
+      <p class="test-time">Время: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
       <div class="progress-bar">
         <div class="progress" :style="{ width: progressPercentage + '%' }"></div>
       </div>
       <h3 class="question-text">{{ currentQuestion.question }}</h3>
-      <h4 class="question-category">Категория вопроса: {{ currentQuestion.category }}</h4>
-      <p class="test-time">Время: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
       <ul class="answers-list">
         <li v-for="(answer, index) in currentQuestion.answers" :key="index" @click="toggleAnswer(index)"
           class="answer-option" :class="getAnswerClass(index)">
@@ -223,7 +224,6 @@ watch(isTestFinished, (newValue) => {
   color: $text-color;
   padding: 20px;
   height: calc(100vh - 58px);
-  overflow-y: auto;
 }
 
 .test-finished-title, .results-title, .question-title, .question-category {
@@ -252,12 +252,30 @@ watch(isTestFinished, (newValue) => {
   margin-bottom: 20px;
 }
 
-.results-list, .answers-list {
+.results-list {
+  list-style-type: none;
+  padding: 10px;
+  overflow: auto;
+  height: calc(100% - 104px);
+  box-shadow: inset 0 0 8px 0 $primary-half-transparent-color;
+  border-radius: 10px;
+}
+
+.answers-list {
   list-style-type: none;
   padding: 0;
 }
 
-.result-item, .answer-option {
+.result-item {
+  margin-bottom: 10px;
+  color: $text-color;
+  border: 1px solid $text-color;
+  padding: 10px;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.answer-option {
   margin-bottom: 10px;
   color: $text-color;
   border: 1px solid $text-color;
@@ -364,7 +382,6 @@ button {
   color: $text-color;
   padding: 20px;
   height: calc(100vh - 58px);
-  overflow-y: auto;
 }
 
 .question-title {
