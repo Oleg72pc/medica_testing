@@ -1,12 +1,12 @@
 <template>
   <div class="container">
     <h2 class="title">Тестирование</h2>
-    <button class="button"
-            @click="startRandomTest">50 случайных вопросов</button>
-    <button class="button"
-            @click="startStandardTest">Все вопросы</button>
-    <button class="button"
-            @click="viewStatistics">Статистика</button>
+    <div class="button-container">
+    <button class="button" @click="startRandomTest">50 случайных вопросов</button>
+    <button class="button" @click="startStandardTest">Все вопросы</button>
+    <button class="button" disabled="true" @click="goToCategorySelection">Вопросы по категориям (скоро)</button>
+    <button class="button" @click="viewStatistics">Статистика</button>
+  </div>
   </div>
 </template>
 
@@ -28,14 +28,14 @@ const viewStatistics = () => {
   router.push( '/statistics' )
 }
 
+const goToCategorySelection = () => {
+  router.push( '/category-selection' )
+}
+
 </script>
 
-<style scoped lang="scss">
-$background-color: #121212;
-$text-color: #e0e0e0;
-$primary-color: #48a2ec;
-$secondary-color: #03dac6;
-$button-hover-color: darken($primary-color, 10%);
+<style lang="scss" scoped>
+@import '../styles/_variables.scss';
 
 .container {
   display: flex;
@@ -50,6 +50,13 @@ $button-hover-color: darken($primary-color, 10%);
   font-size: 2rem;
   margin-bottom: 20px;
   color: $text-color;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: $background-color;
 }
 
 .button {
@@ -67,4 +74,11 @@ $button-hover-color: darken($primary-color, 10%);
     background-color: $button-hover-color;
   }
 }
+
+.button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 </style>

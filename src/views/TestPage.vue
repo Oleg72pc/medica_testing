@@ -1,57 +1,66 @@
 <template>
   <div v-if="isTestFinished" class="test-finished-container">
-    <h2 class="test-finished-title">Тест завершен!</h2>
-    <p class="test-summary">Вы ответили на {{ correctAnswers }} из {{ questions.length }} вопросов.</p>
-    <p class="test-time">Время выполнения: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
-    <h3 class="results-title">Результаты:</h3>
-    <ul class="results-list">
-      <li v-for="(question, index) in questions" :key="index" class="result-item">
-        <p class="question-text">{{ question.question }}</p>
-        <p class="answer-status">
-          <span class="skip-res" v-if="userAnswers[index].length === 0">Пропущено</span>
-          <span class="correct-res" v-else-if="isCorrectAnswer(index)">Правильно</span>
-          <span class="incorrect-res" v-else>Неправильно</span>
-        </p>
-        <ul class="answers-list">
-          <li v-for="(answer, answerIndex) in question.answers" :key="answerIndex" class="answer-option" :class="{ correct: question.correctIndexes?.includes(answerIndex), selected: userAnswers[index]?.includes(answerIndex) }">
-            {{ answer }}
-          </li>
-        </ul>
-      </li>
-    </ul>
-    <div class="buttons-container">
-      <button class="restart-button" @click="restartTest">Начать заново</button>
-      <button class="back-home-button" @click="goHome">На главную</button>
+    <div class="top-container">
+      <h2 class="test-finished-title">Тест завершен!</h2>
+      <div class="home-page" @click="goHome">
+        <img class="home-img" src="../assets/home-white.svg" alt="home" />
+      </div>
     </div>
-  </div>
+      <p class="test-summary">Вы ответили на {{ correctAnswers }} из {{ questions.length }} вопросов.</p>
+      <p class="test-time">Время выполнения: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
+      <h3 class="results-title">Результаты:</h3>
+      <ul class="results-list">
+        <li v-for="(question, index) in questions" :key="index" class="result-item">
+          <p class="question-text">{{ question.question }}</p>
+          <p class="answer-status">
+            <span class="skip-res" v-if="userAnswers[index].length === 0">Пропущено</span>
+            <span class="correct-res" v-else-if="isCorrectAnswer(index)">Правильно</span>
+            <span class="incorrect-res" v-else>Неправильно</span>
+          </p>
+          <ul class="answers-list">
+            <li v-for="(answer, answerIndex) in question.answers" :key="answerIndex" class="answer-option"
+              :class="{ correct: question.correctIndexes?.includes(answerIndex), selected: userAnswers[index]?.includes(answerIndex) }">
+              {{ answer }}
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="buttons-container">
+        <button class="restart-button" @click="restartTest">Начать заново</button>
+      </div>
+    </div>
 
-  <div class="questions-container" v-else-if="currentQuestion">
-    <h2 class="question-title">Вопрос {{ currentIndex + 1 }} из {{ questions.length }}</h2>
-    <div class="progress-bar">
-      <div class="progress" :style="{ width: progressPercentage + '%' }"></div>
+    <div class="questions-container" v-else-if="currentQuestion">
+      <div class="top-container">
+        <h2 class="question-title">Вопрос {{ currentIndex + 1 }} из {{ questions.length }}</h2>
+        <div class="home-page" @click="goHome">
+          <img class="home-img" src="../assets/home-white.svg" alt="home" />
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress" :style="{ width: progressPercentage + '%' }"></div>
+      </div>
+      <h3 class="question-text">{{ currentQuestion.question }}</h3>
+      <h4 class="question-category">Категория вопроса: {{ currentQuestion.category }}</h4>
+      <p class="test-time">Время: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
+      <ul class="answers-list">
+        <li v-for="(answer, index) in currentQuestion.answers" :key="index" @click="toggleAnswer(index)"
+          class="answer-option" :class="getAnswerClass(index)">
+          {{ answer }}
+        </li>
+      </ul>
+      <img v-if="isAnswered" :src="resultImage" alt="Result Image" class="result-image" />
+      <div class="buttons-container">
+        <button v-if="!isAnswered && !hasSelectedAnswer" class="skip-button" @click="skipQuestion">Пропустить
+          вопрос</button>
+        <button v-if="!isAnswered && hasSelectedAnswer" class="submit-button" @click="submitAnswer">Ответить</button>
+        <button v-if="isAnswered" class="next-button" @click="nextQuestion">Следующий вопрос</button>
+      </div>
     </div>
-    <h3 class="question-text">{{ currentQuestion.question }}</h3>
-    <h4 class="question-category">Категория вопроса: {{ currentQuestion.category }}</h4>
-    <p class="test-time">Время: {{ Math.floor(elapsedTime / 60) }} мин {{ elapsedTime % 60 }} сек</p>
-    <ul class="answers-list">
-      <li v-for="(answer, index) in currentQuestion.answers" :key="index" @click="toggleAnswer(index)" 
-      class="answer-option" 
-      :class="getAnswerClass(index)">
-        {{ answer }}
-      </li>
-    </ul>
-    <img v-if="isAnswered" :src="resultImage" alt="Result Image" class="result-image" />
-    <div class="buttons-container">
-      <button v-if="!isAnswered && hasSelectedAnswer" class="submit-button" @click="submitAnswer">Ответить</button>
-      <button v-if="isAnswered" class="next-button" @click="nextQuestion">Следующий вопрос</button>
-      <button v-if="!isAnswered" class="skip-button" @click="skipQuestion">Пропустить</button>
-      <button class="back-home-button" @click="goHome">На главную</button>
-    </div>
-  </div>
 
-  <div v-else class="loading-container">
-    <p class="loading-text">Идет загрузка вопросов...</p>
-  </div>
+    <div v-else class="loading-container">
+      <p class="loading-text">Идет загрузка вопросов...</p>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -207,21 +216,13 @@ watch(isTestFinished, (newValue) => {
 </script>
 
 <style lang="scss" scoped>
-$background-color: #121212;
-$text-color: #e0e0e0;
-$primary-color: #48a2ec;
-$secondary-color: #03badade;
-$progress-color: #4caf50;
-$button-hover-color: darken($primary-color, 10%);
-$correct-color: #4caf50;
-$incorrect-color: #f44336;
-$skip-color: #ff9800;
+@import '../styles/_variables.scss';
 
 .test-finished-container {
   background-color: $background-color;
   color: $text-color;
   padding: 20px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 58px);
   overflow-y: auto;
 }
 
@@ -299,8 +300,8 @@ $skip-color: #ff9800;
 }
 
 button {
-  padding: 5px 10px;
-  margin: 10px;
+  padding: 10px 20px;
+  margin: 0 10px;
   font-size: 1rem;
   color: $text-color;
   background-color: $primary-color;
@@ -323,7 +324,6 @@ button {
   display: flex;
   justify-content: center;
   padding: 10px 0;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .loading-container {
@@ -333,17 +333,42 @@ button {
   height: 100vh;
 }
 
+.top-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  margin-bottom: 10px;
+}
+
+.home-page {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: $primary-color; 
+  border-radius: 50%; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer; 
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.home-img {
+  width: 28px;
+  height: 28px;
+}
+
 .questions-container {
   background-color: $background-color;
   color: $text-color;
   padding: 20px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 58px);
   overflow-y: auto;
 }
 
 .question-title {
   font-size: 1.5rem;
-  margin-bottom: 10px;
 }
 
 .question-text {

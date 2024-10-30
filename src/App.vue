@@ -7,5 +7,11 @@
 <script setup lang="ts">
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import './styles/_variables.scss';
+
+#app {
+  background-color: $background-color;
+}
+
 </style>

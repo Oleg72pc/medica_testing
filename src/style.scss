@@ -1,8 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import './styles/_variables.scss';
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Rubik', sans-serif;
-  }
+}
+
+// Стилизация скроллбара
+::-webkit-scrollbar {
+  width: 4px; // Ширина скроллбара
+  height: 8px; // Высота скроллбара для горизонтальных скроллов
+}
+
+::-webkit-scrollbar-track {
+  background: #4e4e4e; // Цвет фона трека
+  border-radius: 10px; // Закругление углов трека
+}
+
+::-webkit-scrollbar-thumb {
+  background: $primary-color; // Цвет ползунка
+  border-radius: 10px; // Закругление углов ползунка
+  transition: background 0.3s; // Плавное изменение цвета
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $button-hover-color; // Цвет ползунка при наведении
+}

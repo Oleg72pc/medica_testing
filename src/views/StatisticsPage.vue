@@ -1,19 +1,21 @@
 <template>
   <div class="statistics-container">
-    <h2 class="statistics-title">Статистика:</h2>
-    <p class="statistics-description">Список вопросов, на которые чаще всего давали неправильные ответы:</p>
-    <ul class="statistics-list">
-      <li v-for="(count, question) in sortedIncorrectAnswers"
-          class="stat-item"
-          :key="question">
-        {{ question }} — {{ count }} раз(а) неправильно
-      </li>
-    </ul>
-    <div class="statistics-button-container">
-      <button class="statistics-button" @click="clearStatistics">Сбросить статистику</button>
-      <button class="statistics-button" @click="goHome">На главную</button>
+    <div class="top-container">
+      <h2 class="statistics-title">Статистика:</h2>
+      <div class="home-page" @click="goHome">
+        <img class="home-img" src="../assets/home-white.svg" alt="home" />
+      </div>
     </div>
-  </div>
+      <p class="statistics-description">Список вопросов, на которые чаще всего давали неправильные ответы:</p>
+      <ul class="statistics-list">
+        <li v-for="(count, question) in sortedIncorrectAnswers" class="stat-item" :key="question">
+          {{ question }} — {{ count }} раз(а) неправильно
+        </li>
+      </ul>
+      <div class="statistics-button-container">
+        <button class="statistics-button" @click="clearStatistics">Сбросить статистику</button>
+      </div>
+    </div>
 </template>
 
 <script setup
@@ -53,24 +55,46 @@ const goHome = () => {
 </script>
 
 <style lang="scss" scoped>
-$background-color: #121212;
-$text-color: #e0e0e0;
-$primary-color: #48a2ec;
-$button-hover-color: #3a8ecf;
-$secondary-color: #03badade;
+@import '../styles/_variables.scss';
 
 .statistics-container {
   background-color: $background-color;
   color: $text-color;
   padding: 20px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 58px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
+.top-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.home-page {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: $primary-color;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.home-img {
+  width: 28px;
+  height: 28px;
+}
+
 .statistics-title {
-  color: $secondary-color;
+  color: $primary-color;
   margin-bottom: 5px;
 }
 
@@ -83,13 +107,14 @@ $secondary-color: #03badade;
   list-style-type: none;
   padding: 0;
   flex-grow: 1;
+  padding-right: 20px;
   overflow-y: auto;
 }
 
 .stat-item {
   margin-bottom: 10px;
   color: $text-color;
-  border: 1px solid $secondary-color;
+  border: 1px solid $primary-color;
   border-radius: 5px;
   padding: 5px;
 }
@@ -103,7 +128,6 @@ $secondary-color: #03badade;
   display: flex;
   justify-content: center;
   padding: 10px 0;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .statistics-button {
@@ -111,14 +135,14 @@ $secondary-color: #03badade;
   margin: 0 10px;
   font-size: 1rem;
   color: $text-color;
-  background-color: $primary-color;
+  background-color: $incorrect-color;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: $button-hover-color;
+    background-color: $incorrect-button-hover-color;
   }
 }
 </style>
