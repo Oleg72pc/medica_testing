@@ -5284,7 +5284,7 @@ export const questions: Question[] = [
     {
         question: "Минимальная скорость раскрытия маточного зева в активную фазу первого периода родов у первородящих составляет (см в 1 час)",
         answers: [ "0,1", "0,5", "1", "2", "3" ],
-        correctIndexes: [ 1 ], // уточнить
+        correctIndexes: [ 1 ],
         category: QuestionCategory.ObstetricsGynecology,
     },
     {
@@ -5786,7 +5786,7 @@ export const questions: Question[] = [
     {
         question: "Абсолютный признак пельвиоперитонита",
         answers: [ "боли внизу живота", "обильные гнойные выделения", "(+) симптом Щёткина-Блюмберга", "кровянистые выделения" ],
-        correctIndexes: [ 0, 2 ], /// уточнить
+        correctIndexes: [ 0, 1, 2 ],
         category: QuestionCategory.ObstetricsGynecology,
     },
     {
@@ -6530,7 +6530,7 @@ export const questions: Question[] = [
     {
         question: "Одноразовые маски медицинского персонала и пациентов с гриппом рекомендовано менять через",
         answers: [ "4 часа", "1 час", "6 часов" ],
-        correctIndexes: [], // уточнить
+        correctIndexes: [ 1 ],
         category: QuestionCategory.InfectionSafety,
     },
 ]

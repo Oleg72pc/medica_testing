@@ -16,20 +16,25 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const TEST_ROUTE = '/test';
+const RANDOM_TEST_ROUTE = '/test?random=true';
+const STATISTICS_ROUTE = '/statistics';
+const CATEGORY_SELECTION_ROUTE = '/category-selection';
+
 const startStandardTest = () => {
-  router.push( '/test' )
+  router.push(TEST_ROUTE);
 }
 
 const startRandomTest = () => {
-  router.push( '/test?random=true' )
+  router.push(RANDOM_TEST_ROUTE);
 }
 
 const viewStatistics = () => {
-  router.push( '/statistics' )
+  router.push(STATISTICS_ROUTE);
 }
 
 const goToCategorySelection = () => {
-  router.push( '/category-selection' )
+  router.push(CATEGORY_SELECTION_ROUTE);
 }
 
 </script>
