@@ -2,18 +2,24 @@
   <div class="statistics-container">
     <div class="top-container">
       <h2 class="statistics-title">Статистика:</h2>
-      <div class="home-page" @click="goHome">
-        <img class="home-img" src="../assets/home-white.svg" alt="home" />
+      <div class="home-page"
+           @click="goHome">
+        <img class="home-img"
+             src="../assets/home-white.svg"
+             alt="home"/>
       </div>
     </div>
       <p class="statistics-description">Список вопросов, на которые чаще всего давали неправильные ответы:</p>
       <ul class="statistics-list">
-        <li v-for="(count, question) in sortedIncorrectAnswers" class="stat-item" :key="question">
+        <li v-for="(count, question) in sortedIncorrectAnswers"
+            class="stat-item"
+            :key="question">
           {{ question }} — {{ count }} раз(а) неправильно
         </li>
       </ul>
       <div class="statistics-button-container">
-        <button class="statistics-button" @click="clearStatistics">Сбросить статистику</button>
+        <button class="statistics-button"
+                @click="clearStatistics">Сбросить статистику</button>
       </div>
     </div>
 </template>
@@ -22,6 +28,7 @@
         lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { HOME_ROUTE } from '../constants/routes'
 
 const incorrectAnswers = ref<Record<string, number>>( {} )
 const router = useRouter()
@@ -35,14 +42,14 @@ const loadStatistics = () => {
   incorrectAnswers.value = savedIncorrectAnswers
 }
 
-const sortedIncorrectAnswers = computed(() => {
-  return Object.entries(incorrectAnswers.value)
-    .sort(([, a], [, b]) => b - a)
-    .reduce((acc, [key, value]) => {
-      acc[key] = value
-      return acc
-    }, {} as Record<string, number>)
-})
+const sortedIncorrectAnswers = computed( () => {
+  return Object.entries( incorrectAnswers.value )
+      .sort( ( [ , a ], [ , b ] ) => b - a )
+      .reduce( ( acc, [ key, value ] ) => {
+        acc[ key ] = value
+        return acc
+      }, {} as Record<string, number> )
+} )
 
 const clearStatistics = () => {
   localStorage.removeItem( 'incorrectAnswers' )
@@ -50,11 +57,12 @@ const clearStatistics = () => {
 }
 
 const goHome = () => {
-  router.push( '/' )
+  router.push( HOME_ROUTE )
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss"
+       scoped>
 @import '../styles/_variables.scss';
 
 .statistics-container {

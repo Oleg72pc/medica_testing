@@ -6529,8 +6529,8 @@ export const questions: Question[] = [
     },
     {
         question: "Одноразовые маски медицинского персонала и пациентов с гриппом рекомендовано менять через",
-        answers: [ "4 часа", "1 час", "6 часов" ],
-        correctIndexes: [ 1 ],
+        answers: [ "4 часа", "1 час", "6 часов", "2 часа" ],
+        correctIndexes: [ 3 ],
         category: QuestionCategory.InfectionSafety,
     },
 ]

@@ -2,10 +2,14 @@
   <div class="container">
     <h2 class="title">Тестирование</h2>
     <div class="button-container">
-    <button class="button" @click="startRandomTest">50 случайных вопросов</button>
-    <button class="button" @click="startStandardTest">Все вопросы</button>
-    <button class="button" disabled="true" @click="goToCategorySelection">Вопросы по категориям (скоро)</button>
-    <button class="button" @click="viewStatistics">Статистика</button>
+    <button class="button"
+            @click="startRandomTest">50 случайных вопросов</button>
+    <button class="button"
+            @click="startStandardTest">Все вопросы</button>
+    <button class="button"
+            @click="goToCategorySelection">Вопросы по категориям</button>
+    <button class="button"
+            @click="viewStatistics">Статистика</button>
   </div>
   </div>
 </template>
@@ -13,33 +17,35 @@
 <script setup
         lang="ts">
 import { useRouter } from 'vue-router'
+import {
+  TEST_ROUTE,
+  RANDOM_TEST_ROUTE,
+  STATISTICS_ROUTE,
+  CATEGORY_SELECTION_ROUTE
+} from '../constants/routes'
 
 const router = useRouter()
 
-const TEST_ROUTE = '/test';
-const RANDOM_TEST_ROUTE = '/test?random=true';
-const STATISTICS_ROUTE = '/statistics';
-const CATEGORY_SELECTION_ROUTE = '/category-selection';
-
 const startStandardTest = () => {
-  router.push(TEST_ROUTE);
+  router.push( TEST_ROUTE )
 }
 
 const startRandomTest = () => {
-  router.push(RANDOM_TEST_ROUTE);
+  router.push( RANDOM_TEST_ROUTE )
 }
 
 const viewStatistics = () => {
-  router.push(STATISTICS_ROUTE);
+  router.push( STATISTICS_ROUTE )
 }
 
 const goToCategorySelection = () => {
-  router.push(CATEGORY_SELECTION_ROUTE);
+  router.push( CATEGORY_SELECTION_ROUTE )
 }
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss"
+       scoped>
 @import '../styles/_variables.scss';
 
 .container {
