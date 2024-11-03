@@ -150,7 +150,8 @@ const submitAnswer = () => {
   if ( isCorrectAnswer( currentIndex.value ) ) {
     correctAnswers.value++
   } else {
-    saveIncorrectAnswer( currentQuestion.value.question )
+    const correctAnswersText = currentQuestion.value.correctIndexes.map( index => currentQuestion.value.answers[ index ] )
+    saveIncorrectAnswer( currentQuestion.value.question, correctAnswersText )
   }
   isAnswered.value = true
 }
@@ -209,9 +210,13 @@ const isSelected = ( index: number ) => {
   return userAnswers.value[ currentIndex.value ]?.includes( index )
 }
 
-const saveIncorrectAnswer = ( questionText: string ) => {
+const saveIncorrectAnswer = ( questionText: string, correctAnswers: string[] ) => {
   const incorrectAnswers = JSON.parse( localStorage.getItem( 'incorrectAnswers' ) || '{}' )
-  incorrectAnswers[ questionText ] = ( incorrectAnswers[ questionText ] || 0 ) + 1
+  if ( !incorrectAnswers[ questionText ] ) {
+    incorrectAnswers[ questionText ] = { count: 0, correctAnswers: [] }
+  }
+  incorrectAnswers[ questionText ].count += 1
+  incorrectAnswers[ questionText ].correctAnswers = correctAnswers
   localStorage.setItem( 'incorrectAnswers', JSON.stringify( incorrectAnswers ) )
 }
 
@@ -419,6 +424,7 @@ button {
   color: $text-color;
   padding: 20px;
   height: calc(100vh - 58px);
+  overflow: hidden;
 }
 
 .question-title {
@@ -437,7 +443,9 @@ button {
 
 .answers-list {
   list-style-type: none;
-  padding: 0;
+  overflow-y: auto;
+  height: calc(80% - 10px);
+  padding: 10px 2px;
 }
 
 .answer-option {

@@ -11,10 +11,12 @@
     </div>
       <p class="statistics-description">Список вопросов, на которые чаще всего давали неправильные ответы:</p>
       <ul class="statistics-list">
-        <li v-for="(count, question) in sortedIncorrectAnswers"
+        <li v-for="(data, question) in sortedIncorrectAnswers"
             class="stat-item"
             :key="question">
-          {{ question }} — {{ count }} раз(а) неправильно
+          <span class="counter">{{ data.count }} раз(а) неправильно</span>
+          <span class="question">Вопрос: {{ question }}</span>
+          <span class="answer">Ответы: {{ Array.isArray(data.correctAnswers) ? data.correctAnswers.join(', ') : 'Нет данных' }}</span>
         </li>
       </ul>
       <div class="statistics-button-container">
@@ -26,11 +28,11 @@
 
 <script setup
         lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { HOME_ROUTE } from '../constants/routes'
 
-const incorrectAnswers = ref<Record<string, number>>( {} )
+const incorrectAnswers = ref<Record<string, { count: number, correctAnswers: string[] }>>({})
 const router = useRouter()
 
 onMounted( () => {
@@ -38,17 +40,16 @@ onMounted( () => {
 } )
 
 const loadStatistics = () => {
-  const savedIncorrectAnswers = JSON.parse( localStorage.getItem( 'incorrectAnswers' ) || '{}' )
-  incorrectAnswers.value = savedIncorrectAnswers
+  incorrectAnswers.value = JSON.parse( localStorage.getItem( 'incorrectAnswers' ) || '{}' )
 }
 
 const sortedIncorrectAnswers = computed( () => {
   return Object.entries( incorrectAnswers.value )
-      .sort( ( [ , a ], [ , b ] ) => b - a )
+      .sort( ( [ , a ], [ , b ] ) => b.count - a.count )
       .reduce( ( acc, [ key, value ] ) => {
         acc[ key ] = value
         return acc
-      }, {} as Record<string, number> )
+      }, {} as Record<string, { count: number, correctAnswers: string[] }> )
 } )
 
 const clearStatistics = () => {
@@ -113,7 +114,6 @@ const goHome = () => {
 
 .statistics-list {
   list-style-type: none;
-  padding: 0;
   flex-grow: 1;
   padding: 10px;
   overflow-y: auto;
@@ -127,6 +127,22 @@ const goHome = () => {
   border: 1px solid $primary-color;
   border-radius: 5px;
   padding: 5px;
+  display: flex;
+  flex-direction: column;
+
+  .counter {
+    color: $primary-color;
+    margin: 3px;
+  }
+
+  .question {
+    margin: 3px;
+  }
+
+  .answer {
+    color: $correct-color;
+    margin: 3px;
+  }
 }
 
 .statistics-button-container {
