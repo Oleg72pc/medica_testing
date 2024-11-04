@@ -444,7 +444,7 @@ button {
 .answers-list {
   list-style-type: none;
   overflow-y: auto;
-  height: calc(80% - 10px);
+  height: calc(80% - 180px);
   padding: 10px 2px;
 }
 
