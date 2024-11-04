@@ -70,11 +70,11 @@
           {{ answer }}
         </li>
       </ul>
-      <img v-if="isAnswered"
-           :src="resultImage"
-           alt="Result Image"
-           class="result-image"/>
       <div class="buttons-container">
+         <img v-if="isAnswered"
+              :src="resultImage"
+              alt="Result Image"
+              class="result-image"/>
         <button v-if="!isAnswered && !hasSelectedAnswer"
                 class="skip-button"
                 @click="skipQuestion">Пропустить
@@ -377,6 +377,7 @@ button {
 
 .buttons-container {
   position: fixed;
+  flex-direction: column;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -433,7 +434,6 @@ button {
 
 .question-text {
   font-size: 1.2rem;
-  margin-bottom: 10px;
 }
 
 .question-category {
@@ -444,8 +444,8 @@ button {
 .answers-list {
   list-style-type: none;
   overflow-y: auto;
-  height: calc(80% - 180px);
-  padding: 10px 2px;
+  height: 55%;
+  padding: 2px;
 }
 
 .answer-option {
@@ -470,7 +470,7 @@ button {
 
 .result-image {
   display: block;
-  margin: 20px auto;
+  margin: 5px auto;
   max-width: 100px;
   height: auto;
   background-color: $text-color;
