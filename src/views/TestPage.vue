@@ -60,16 +60,16 @@
         <div class="progress"
              :style="{ width: progressPercentage + '%' }"></div>
       </div>
-      <h3 class="question-text">{{ currentQuestion.question }}</h3>
-      <ul class="answers-list">
-        <li v-for="(answer, index) in currentQuestion.answers"
+      <div class="answers-list">
+        <span class="question-text">{{ currentQuestion.question }}</span>
+        <div v-for="(answer, index) in currentQuestion.answers"
             :key="index"
             @click="toggleAnswer(index)"
             class="answer-option"
             :class="getAnswerClass(index)">
           {{ answer }}
-        </li>
-      </ul>
+        </div>
+      </div>
       <div class="buttons-container">
          <img v-if="isAnswered"
               :src="resultImage"
@@ -259,222 +259,227 @@ watch( isTestFinished, ( newValue ) => {
 
 <style lang="scss"
        scoped>
-@import '../styles/_variables.scss';
+      @import '../styles/_variables.scss';
 
-.test-finished-container {
-  background-color: $background-color;
-  color: $text-color;
-  padding: 20px;
-  height: calc(100vh - 58px);
-}
+      .test-finished-container {
+        background-color: $background-color;
+        color: $text-color;
+        padding: 20px;
+        height: calc(100vh - 58px);
+      }
 
-.test-finished-title, .results-title, .question-title, .question-category {
-  color: $text-color;
-}
+      .test-finished-title,
+      .results-title,
+      .question-title,
+      .question-category {
+        color: $text-color;
+      }
 
-.test-summary, .answer-status, .loading-text {
-  color: $text-color;
+      .test-summary,
+      .answer-status,
+      .loading-text {
+        color: $text-color;
 
-  .skip-res {
-    color: $skip-color;
-  }
+        .skip-res {
+          color: $skip-color;
+        }
 
-  .correct-res {
-    color: $correct-color;
-  }
+        .correct-res {
+          color: $correct-color;
+        }
 
-  .incorrect-res {
-    color: $incorrect-color;
-  }
-}
+        .incorrect-res {
+          color: $incorrect-color;
+        }
+      }
 
-.test-time {
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+      .test-time {
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
 
-.results-list {
-  list-style-type: none;
-  padding: 10px;
-  overflow: auto;
-  height: calc(100% - 104px);
-  box-shadow: inset 0 0 8px 0 $primary-half-transparent-color;
-  border-radius: 10px;
-}
+      .results-list {
+        list-style-type: none;
+        padding: 10px;
+        overflow: auto;
+        height: calc(100% - 104px);
+        box-shadow: inset 0 0 8px 0 $primary-half-transparent-color;
+        border-radius: 10px;
+      }
 
-.answers-list {
-  list-style-type: none;
-  padding: 0;
-}
+      .result-item {
+        margin-bottom: 10px;
+        color: $text-color;
+        border: 1px solid $text-color;
+        padding: 10px;
+        border-radius: 10px;
+        pointer-events: none;
+      }
 
-.result-item {
-  margin-bottom: 10px;
-  color: $text-color;
-  border: 1px solid $text-color;
-  padding: 10px;
-  border-radius: 10px;
-  pointer-events: none;
-}
+      .answer-option {
+        margin-bottom: 10px;
+        color: $text-color;
+        border: 1px solid $text-color;
+        padding: 10px;
+        border-radius: 10px;
+      }
 
-.answer-option {
-  margin-bottom: 10px;
-  color: $text-color;
-  border: 1px solid $text-color;
-  padding: 10px;
-  border-radius: 10px;
-}
+      .answer-option {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
 
-.answer-option {
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+        &.selected {
+          border-color: $secondary-color;
+          color: $secondary-color;
+          font-weight: bold;
+        }
 
-  &.selected {
-    background-color: $secondary-color;
-  }
+        &.correct {
+          background-color: lighten($correct-color, 20%);
+        }
 
-  &.correct {
-    background-color: lighten($correct-color, 20%);
-  }
+        &.incorrect {
+          background-color: darken($incorrect-color, 20%);
+        }
+      }
 
-  &.incorrect {
-    background-color: darken($incorrect-color, 20%);
-  }
-}
+      .progress-bar {
+        width: 100%;
+        background-color: lighten($background-color, 10%);
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
 
-.progress-bar {
-  width: 100%;
-  background-color: lighten($background-color, 10%);
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
+      .progress {
+        height: 10px;
+        background-color: $progress-color;
+        transition: width 0.3s ease;
+      }
 
-.progress {
-  height: 10px;
-  background-color: $progress-color;
-  transition: width 0.3s ease;
-}
+      button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        font-size: 1rem;
+        color: $text-color;
+        background-color: $primary-color;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
 
-button {
-  padding: 10px 20px;
-  margin: 0 10px;
-  font-size: 1rem;
-  color: $text-color;
-  background-color: $primary-color;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+        &:hover {
+          background-color: $button-hover-color;
+        }
+      }
 
-  &:hover {
-    background-color: $button-hover-color;
-  }
-}
+      .buttons-container {
+        position: fixed;
+        flex-direction: column;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: $background-color;
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
+      }
 
-.buttons-container {
-  position: fixed;
-  flex-direction: column;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: $background-color;
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-}
+      .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+      .top-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
 
-.top-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
+      .home-page {
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background-color: $primary-color;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+      }
 
-.home-page {
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background-color: $primary-color;
-  border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-}
+      .home-img {
+        width: 28px;
+        height: 28px;
+      }
 
-.home-img {
-  width: 28px;
-  height: 28px;
-}
+      .questions-container {
+        background-color: $background-color;
+        color: $text-color;
+        padding: 20px;
+        height: calc(100vh - 58px);
+        overflow: hidden;
+      }
 
-.questions-container {
-  background-color: $background-color;
-  color: $text-color;
-  padding: 20px;
-  height: calc(100vh - 58px);
-  overflow: hidden;
-}
+      .question-title {
+        font-size: 1.5rem;
+      }
 
-.question-title {
-  font-size: 1.5rem;
-}
+      .question-text {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
 
-.question-text {
-  font-size: 1.2rem;
-}
+      .question-category {
+        font-size: 0.8rem;
+        font-style: italic;
+      }
 
-.question-category {
-  font-size: 0.8rem;
-  font-style: italic;
-}
+      .answers-list {
+        list-style-type: none;
+        overflow-y: auto;
+        height: 63%;
+        padding: 2px;
+      }
 
-.answers-list {
-  list-style-type: none;
-  overflow-y: auto;
-  height: 55%;
-  padding: 2px;
-}
+      .answer-option {
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
 
-.answer-option {
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+        &.selected {
+          border-color: $secondary-color;
+          color: $secondary-color;
+          font-weight: bold;
+        }
 
-  &.selected {
-    background-color: $secondary-color;
-  }
+        &.correct {
+          background-color: lighten($correct-color, 20%);
+        }
 
-  &.correct {
-    background-color: lighten($correct-color, 20%);
-  }
+        &.incorrect {
+          background-color: darken($incorrect-color, 20%);
+        }
+      }
 
-  &.incorrect {
-    background-color: darken($incorrect-color, 20%);
-  }
-}
-
-.result-image {
-  display: block;
-  margin: 5px auto;
-  max-width: 100px;
-  height: auto;
-  background-color: $text-color;
-  border-radius: 50%;
-}
-</style>
+      .result-image {
+        display: block;
+        margin: 5px auto;
+        max-width: 100px;
+        height: auto;
+        background-color: $text-color;
+        border-radius: 50%;
+      }
+    </style>
 

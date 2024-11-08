@@ -1,9 +1,15 @@
 <template>
   <div class="container">
-    <h2 class="title">Тестирование</h2>
+    <div class="title">Тестирование</div>
     <div class="button-container">
-    <button class="button"
-            @click="startRandomTest">50 случайных вопросов</button>
+    <button class="button-main"
+            @click="startRandomTest">50 случайных вопросов
+     <span class="img-container">
+      <img class="img"
+           src="../assets/cat.png"
+           alt="cat">
+    </span>
+    </button>
     <button class="button"
             @click="startStandardTest">Все вопросы</button>
     <button class="button"
@@ -11,6 +17,7 @@
     <button class="button"
             @click="viewStatistics">Статистика</button>
   </div>
+
   </div>
 </template>
 
@@ -59,7 +66,7 @@ const goToCategorySelection = () => {
 
 .title {
   font-size: 2rem;
-  margin-bottom: 20px;
+  margin-bottom: 80px;
   color: $text-color;
 }
 
@@ -90,6 +97,41 @@ const goToCategorySelection = () => {
   background-color: #666;
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.button-main {
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 1rem;
+  color: $text-color;
+  background-color: $primary-color;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: relative;
+
+  &:hover {
+    background-color: $button-hover-color;
+  }
+}
+
+.button-main :disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+.img-container {
+  position: absolute;
+  top: -75px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  .img {
+    width: 120px;
+  }
 }
 
 </style>

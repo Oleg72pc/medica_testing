@@ -32,7 +32,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { HOME_ROUTE } from '../constants/routes'
 
-const incorrectAnswers = ref<Record<string, { count: number, correctAnswers: string[] }>>({})
+const incorrectAnswers = ref<Record<string, { count: number, correctAnswers: string[] }>>( {} )
 const router = useRouter()
 
 onMounted( () => {
@@ -60,6 +60,7 @@ const clearStatistics = () => {
 const goHome = () => {
   router.push( HOME_ROUTE )
 }
+
 </script>
 
 <style lang="scss"
